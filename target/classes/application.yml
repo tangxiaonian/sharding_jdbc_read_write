@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: spring_boot_multidatasorce
+
+server:
+  port: 8080
+
+
+sharding:
+  jdbc:
+    datasource:
+      names: master,slave0
+      # 配置主库
+      master:
+        type: com.zaxxer.hikari.HikariDataSource
+        driverClassName: com.mysql.cj.jdbc.Driver
+        jdbcUrl: jdbc:mysql://192.168.108.127:3306/db1?useUnicode=true&characterEncoding=utf8&tinyInt1isBit=false&useSSL=false&serverTimezone=GMT
+        username: root
+        password: 721000
+
+      # 配置从库
+      slave0:
+        type: com.zaxxer.hikari.HikariDataSource
+        driverClassName: com.mysql.cj.jdbc.Driver
+        jdbcUrl: jdbc:mysql://192.168.108.128:3306/db1?useUnicode=true&characterEncoding=utf8&tinyInt1isBit=false&useSSL=false&serverTimezone=GMT
+        username: root
+        password: 721000
+    config:
+      masterslave: #配置读写分离
+        load-balance-algorithm-type: round_robin   # 轮询策略
+        master-data-source-name: master # 指定主数据源名称
+        slave-data-source-names: slave0  # 从数据源名称  逗号 分隔多个
+        name: masterdb
+      props:
+        sql: # 开启sql显示，默认false
+          show: true
+mybatis:
+  mapper-locations: /mapper/*.xml
+  type-aliases-package: com.tang.read_write.domain
